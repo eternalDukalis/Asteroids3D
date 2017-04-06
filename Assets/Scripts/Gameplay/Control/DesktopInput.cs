@@ -9,6 +9,9 @@ public class DesktopInput : BaseInput {
 
     Vector3 previousMousePosition;
 
+    [SerializeField]
+    float turningSensivity;
+
 	void Update ()
     {
         //Keys downs and ups handling
@@ -30,10 +33,10 @@ public class DesktopInput : BaseInput {
         if (Input.GetKeyDown(KeyCode.D))
             base.StartMoving(MoveSide.Right);
         if (Input.GetKeyUp(KeyCode.D))
-            base.StartMoving(MoveSide.Right);
+            base.StopMoving(MoveSide.Right);
 
         if ((Input.GetMouseButton(1)) && ((Input.mousePosition - previousMousePosition).magnitude > 0))
-            base.StartTurning(Input.mousePosition - previousMousePosition);
+            base.StartTurning((Input.mousePosition - previousMousePosition) * turningSensivity);
         previousMousePosition = Input.mousePosition;
 
         if (Input.GetMouseButtonDown(0))
