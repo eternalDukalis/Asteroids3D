@@ -11,6 +11,15 @@ public class Starship : MonoBehaviour {
 
     [SerializeField]
     float moveSpeed = 1;
+    [SerializeField]
+    float bounceStartSpeed = 15;
+    [SerializeField]
+    float bounceAcceleration = 12;
+
+    /// <summary>
+    /// When starship collides with asteroid
+    /// </summary>
+    public static event System.Action OnAsteroidCollide;
 
 	void Start ()
     {
@@ -20,6 +29,19 @@ public class Starship : MonoBehaviour {
         BaseInput.OnStartTurning += StartTurning;
         BaseInput.OnShot += Shoot;
 	}
+
+    //Starship collision handling
+    private void OnCollisionEnter(Collision collision)
+    {
+        //When starship collides with asteroid
+        if (collision.gameObject.GetComponent<Asteroid>() != null)
+        {
+            Vector3 direction = (transform.position - collision.transform.position).normalized;
+            StartCoroutine(fadeMove(direction, bounceStartSpeed, bounceAcceleration));
+            if (OnAsteroidCollide != null)
+                OnAsteroidCollide();
+        }
+    }
 
     //Event handling methods
 
@@ -48,21 +70,34 @@ public class Starship : MonoBehaviour {
         if (moveCoroutines.ContainsKey(obj))
         {
             StopCoroutine(moveCoroutines[obj]);
-            moveCoroutines[obj] = StartCoroutine(move(obj));
+            moveCoroutines[obj] = StartCoroutine(move(MoveSideToAxis(obj)));
         }
         else
-            moveCoroutines.Add(obj, StartCoroutine(move(obj)));
+            moveCoroutines.Add(obj, StartCoroutine(move(MoveSideToAxis(obj))));
     }
 
     //Coroutines
 
-    IEnumerator move(MoveSide side)
+    IEnumerator move(Vector3 direction)
     {
         while (true)
         {
-            transform.position += MoveSideToAxis(side) * Time.deltaTime * moveSpeed;
+            transform.position += direction * Time.deltaTime * moveSpeed;
             yield return null;
         }
+    }
+
+    //Fading moving
+    IEnumerator fadeMove(Vector3 direction, float initialSpeed, float acceleration)
+    {
+        float speed = initialSpeed;
+        while ((speed - acceleration) * Time.deltaTime > 0)
+        {
+            transform.position += direction * Time.deltaTime * speed;
+            speed -= acceleration * Time.deltaTime;
+            yield return null;
+        }
+        transform.position += direction * Time.deltaTime * speed;
     }
 
     //Additional methods
