@@ -61,6 +61,7 @@ public class GameObjectsPool : MonoBehaviour {
         if (objectsStack.Count == 0)
         {
             GameObject cres = Instantiate(objectPrefab);
+            cres.transform.SetParent(parentObject.transform, false);
             Init(cres);
             _size++;
             return cres;

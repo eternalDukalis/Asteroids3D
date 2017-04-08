@@ -13,7 +13,12 @@ public class Asteroid : MonoBehaviour {
     float turnSpeed;
     Vector3 moveVector; //Asteroid moves with this vector per second
     Vector3 turnVector; //Asteroid rotates with this vector per second
-    GameObject centerObject; 
+    GameObject centerObject;
+
+    /// <summary>
+    /// When asteroid is destroyed
+    /// </summary>
+    public static event System.Action OnAsteroidDestroy;
 
 	void Start ()
     {
@@ -31,6 +36,19 @@ public class Asteroid : MonoBehaviour {
             AsteroidsSpawner.Instance.Set();
         }
         transform.localEulerAngles += turnVector * Time.deltaTime;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //When asteroid collides with missile
+        if (collision.gameObject.GetComponent<Missile>() != null)
+        {
+            collision.gameObject.GetComponent<Missile>().Remove();
+            AsteroidsSpawner.Instance.Remove(this);
+            AsteroidsSpawner.Instance.Set();
+            if (OnAsteroidDestroy != null)
+                OnAsteroidDestroy();
+        }
     }
 
     /// <summary>

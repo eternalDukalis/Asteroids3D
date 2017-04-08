@@ -9,12 +9,16 @@ public class Starship : MonoBehaviour {
 
     Dictionary<MoveSide, Coroutine> moveCoroutines;
 
+#pragma warning disable
     [SerializeField]
     float moveSpeed = 1;
     [SerializeField]
     float bounceStartSpeed = 15;
     [SerializeField]
     float bounceAcceleration = 12;
+    [SerializeField]
+    MissilesPool mPool;
+#pragma warning restore
 
     /// <summary>
     /// When starship collides with asteroid
@@ -24,6 +28,7 @@ public class Starship : MonoBehaviour {
 	void Start ()
     {
         moveCoroutines = new Dictionary<MoveSide, Coroutine>();
+        mPool.Create(mPool.Size);
         BaseInput.OnStartMoving += StartMoving;
         BaseInput.OnStopMoving += StopMoving;
         BaseInput.OnStartTurning += StartTurning;
@@ -47,7 +52,7 @@ public class Starship : MonoBehaviour {
 
     private void Shoot()
     {
-        throw new System.NotImplementedException();
+        mPool.Take();
     }
 
     private void StartTurning(Vector2 obj)
@@ -70,19 +75,19 @@ public class Starship : MonoBehaviour {
         if (moveCoroutines.ContainsKey(obj))
         {
             StopCoroutine(moveCoroutines[obj]);
-            moveCoroutines[obj] = StartCoroutine(move(MoveSideToAxis(obj)));
+            moveCoroutines[obj] = StartCoroutine(move(obj));
         }
         else
-            moveCoroutines.Add(obj, StartCoroutine(move(MoveSideToAxis(obj))));
+            moveCoroutines.Add(obj, StartCoroutine(move(obj)));
     }
 
     //Coroutines
 
-    IEnumerator move(Vector3 direction)
+    IEnumerator move(MoveSide side)
     {
         while (true)
         {
-            transform.position += direction * Time.deltaTime * moveSpeed;
+            transform.position += MoveSideToAxis(side) * Time.deltaTime * moveSpeed;
             yield return null;
         }
     }
