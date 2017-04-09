@@ -21,6 +21,12 @@ public class Fire : MonoBehaviour {
         BaseInput.OnStopMoving += StopMoving;
 	}
 
+    private void OnDestroy()
+    {
+        BaseInput.OnStartMoving -= StartMoving;
+        BaseInput.OnStopMoving -= StopMoving;
+    }
+
     private void StopMoving(MoveSide obj)
     {
         SetSpeed(false);

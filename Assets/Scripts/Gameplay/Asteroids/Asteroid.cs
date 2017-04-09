@@ -41,7 +41,7 @@ public class Asteroid : MonoBehaviour {
     private void OnCollisionEnter(Collision collision)
     {
         //When asteroid collides with missile
-        if (collision.gameObject.GetComponent<Missile>() != null)
+        if ((collision.gameObject.GetComponent<Missile>() != null) && (collision.gameObject.activeInHierarchy))
         {
             collision.gameObject.GetComponent<Missile>().Remove();
             AsteroidsSpawner.Instance.Remove(this);

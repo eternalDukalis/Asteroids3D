@@ -23,6 +23,13 @@ public class Missile : MonoBehaviour {
             Remove();
 	}
 
+    //Missile should be removed if it collides with something (except asteroids)
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.GetComponent<Asteroid>() == null)
+            Remove();
+    }
+
     /// <summary>
     /// Set missile
     /// </summary>

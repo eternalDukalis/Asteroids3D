@@ -25,6 +25,11 @@ public class Starship : MonoBehaviour {
     /// </summary>
     public static event System.Action OnAsteroidCollide;
 
+    /// <summary>
+    /// When starship went through the portal
+    /// </summary>
+    public static event System.Action OnPortalShift;
+
 	void Start ()
     {
         moveCoroutines = new Dictionary<MoveSide, Coroutine>();
@@ -34,6 +39,14 @@ public class Starship : MonoBehaviour {
         BaseInput.OnStartTurning += StartTurning;
         BaseInput.OnShot += Shoot;
 	}
+
+    private void OnDestroy()
+    {
+        BaseInput.OnStartMoving -= StartMoving;
+        BaseInput.OnStopMoving -= StopMoving;
+        BaseInput.OnStartTurning -= StartTurning;
+        BaseInput.OnShot -= Shoot;
+    }
 
     //Starship collision handling
     private void OnCollisionEnter(Collision collision)
@@ -45,6 +58,13 @@ public class Starship : MonoBehaviour {
             StartCoroutine(fadeMove(direction, bounceStartSpeed, bounceAcceleration));
             if (OnAsteroidCollide != null)
                 OnAsteroidCollide();
+        }
+        //When starship collides with portal
+        if (collision.gameObject.GetComponent<Portal>() != null)
+        {
+            GameController.Instance.LoadLevel(collision.gameObject.GetComponent<Portal>().SceneName);
+            if (OnPortalShift != null)
+                OnPortalShift();
         }
     }
 

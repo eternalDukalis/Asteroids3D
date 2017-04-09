@@ -28,6 +28,11 @@ public class CameraTarget : MonoBehaviour {
             transform.localPosition *= distance / transform.localPosition.magnitude;
 	}
 
+    private void OnDestroy()
+    {
+        BaseInput.OnCameraDistanceChanging -= ChangeDistance;
+    }
+
     private void ChangeDistance(float obj)
     {
         //Calculating and applying new distance
