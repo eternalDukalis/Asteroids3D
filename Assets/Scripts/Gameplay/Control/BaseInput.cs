@@ -32,6 +32,10 @@ public abstract class BaseInput : MonoBehaviour {
     /// When camera approaches or leaves
     /// </summary>
     public static event System.Action<float> OnCameraDistanceChanging;
+    /// <summary>
+    /// When UI is switched
+    /// </summary>
+    public static event System.Action<bool> OnUISwitch;
 
     [SerializeField]
     protected RuntimePlatform[] targetPlatforms; //Platforms for handling
@@ -80,5 +84,11 @@ public abstract class BaseInput : MonoBehaviour {
     {
         if (OnCameraDistanceChanging != null)
             OnCameraDistanceChanging(moveValue);
+    }
+
+    protected void SwitchUI(bool isEnabled)
+    {
+        if (OnUISwitch != null)
+            OnUISwitch(isEnabled);
     }
 }

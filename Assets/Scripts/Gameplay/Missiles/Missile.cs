@@ -15,18 +15,23 @@ public class Missile : MonoBehaviour {
     {
 		
 	}
-	
-	void Update ()
+
+    //Missile should be removed if it collides with something (except asteroids and starship)
+    private void OnCollisionEnter(Collision collision)
+    {
+        if ((collision.gameObject.GetComponent<Asteroid>() == null) && (collision.gameObject.GetComponent<Starship>() == null))
+        {
+            Remove();
+        }
+    }
+
+    /// <summary>
+    /// Moves missile by step
+    /// </summary>
+    public void Move()
     {
         transform.position += transform.forward * moveSpeed * Time.deltaTime;
         if ((_pool == null) || ((transform.position - _pool.CenterPosition).magnitude > _pool.MaxDistance))
-            Remove();
-	}
-
-    //Missile should be removed if it collides with something (except asteroids)
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.GetComponent<Asteroid>() == null)
             Remove();
     }
 

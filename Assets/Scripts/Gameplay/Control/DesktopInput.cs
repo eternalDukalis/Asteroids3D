@@ -44,5 +44,10 @@ public class DesktopInput : BaseInput {
 
         if (Input.mouseScrollDelta.y != 0)
             base.ChangeCameraDistance(Input.mouseScrollDelta.y);
+
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+            base.SwitchUI(true);
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+            base.SwitchUI(false);
     }
 }

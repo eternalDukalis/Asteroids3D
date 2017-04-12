@@ -30,6 +30,8 @@ public class Starship : MonoBehaviour {
     /// </summary>
     public static event System.Action OnPortalShift;
 
+    bool activityIsLimited = false;
+
 	void Start ()
     {
         moveCoroutines = new Dictionary<MoveSide, Coroutine>();
@@ -38,7 +40,13 @@ public class Starship : MonoBehaviour {
         BaseInput.OnStopMoving += StopMoving;
         BaseInput.OnStartTurning += StartTurning;
         BaseInput.OnShot += Shoot;
+        BaseInput.OnUISwitch += LimitActivity;
 	}
+
+    private void LimitActivity(bool obj)
+    {
+        activityIsLimited = obj;
+    }
 
     private void OnDestroy()
     {
@@ -46,6 +54,7 @@ public class Starship : MonoBehaviour {
         BaseInput.OnStopMoving -= StopMoving;
         BaseInput.OnStartTurning -= StartTurning;
         BaseInput.OnShot -= Shoot;
+        BaseInput.OnUISwitch -= LimitActivity;
     }
 
     //Starship collision handling
@@ -72,7 +81,8 @@ public class Starship : MonoBehaviour {
 
     private void Shoot()
     {
-        mPool.Take();
+        if (!activityIsLimited)
+            mPool.Take();
     }
 
     private void StartTurning(Vector2 obj)

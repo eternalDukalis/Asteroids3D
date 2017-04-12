@@ -26,18 +26,6 @@ public class Asteroid : MonoBehaviour {
         turnVector = RandomVector(turnSpeed);
 	}
 
-    private void Update()
-    {
-        transform.position += moveVector * Time.deltaTime;
-        //If asteroid is too far then we need to remove it and create a new one
-        if ((centerObject != null) && ((centerObject.transform.position - transform.position).magnitude > AsteroidsSpawner.MaxDistance))
-        {
-            AsteroidsSpawner.Instance.Remove(this);
-            AsteroidsSpawner.Instance.Set();
-        }
-        transform.localEulerAngles += turnVector * Time.deltaTime;
-    }
-
     private void OnCollisionEnter(Collision collision)
     {
         //When asteroid collides with missile
@@ -49,6 +37,21 @@ public class Asteroid : MonoBehaviour {
             if (OnAsteroidDestroy != null)
                 OnAsteroidDestroy();
         }
+    }
+
+    /// <summary>
+    /// Move asteroid by step
+    /// </summary>
+    public void Move()
+    {
+        transform.position += moveVector * Time.deltaTime;
+        //If asteroid is too far then we need to remove it and create a new one
+        if ((centerObject != null) && ((centerObject.transform.position - transform.position).magnitude > AsteroidsSpawner.MaxDistance))
+        {
+            AsteroidsSpawner.Instance.Remove(this);
+            AsteroidsSpawner.Instance.Set();
+        }
+        transform.localEulerAngles += turnVector * Time.deltaTime;
     }
 
     /// <summary>

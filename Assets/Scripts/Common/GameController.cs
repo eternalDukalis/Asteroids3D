@@ -49,8 +49,12 @@ public class GameController : MonoBehaviour {
 	void Awake ()
     {
         if (_instance != null)
-            Destroy(_instance);
+        {
+            DestroyObject(gameObject);
+            return;
+        }
         _instance = this;
+        DontDestroyOnLoad(gameObject);
         Asteroid.OnAsteroidDestroy += IncreaseScore;
         Starship.OnAsteroidCollide += InformAboutAsteroidCollide;
         Starship.OnPortalShift += InformAboutPortalShift;
@@ -92,12 +96,24 @@ public class GameController : MonoBehaviour {
         _log = message + separator + _log;
     }
 
+    //Reset game state
+    void ResetState()
+    {
+        _score = 0;
+        _log = "";
+    }
+
     /// <summary>
     /// Load new level
     /// </summary>
     /// <param name="sceneName">Level's scene name</param>
     public void LoadLevel(string sceneName)
     {
+        if (SceneUtility.GetBuildIndexByScenePath(scenesPath + sceneName) < 0)
+        {
+            Debug.LogError("Cannot load scene. Maybe this scene is not exist or not in build.");
+            return;
+        }
         SceneManager.LoadScene(scenesPath + sceneName);
     }
 
@@ -106,6 +122,7 @@ public class GameController : MonoBehaviour {
     /// </summary>
     public void Restart()
     {
+        ResetState();
         LoadLevel(SceneManager.GetActiveScene().name);
     }
 
