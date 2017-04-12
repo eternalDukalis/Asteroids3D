@@ -25,6 +25,6 @@ public class CameraFollow : MonoBehaviour {
             transform.position += (target.Position - transform.position).normalized * moveSpeed * Time.deltaTime;
         else
             transform.position = target.Position;
-        transform.LookAt(target.TargetObject);
+        transform.LookAt(target.TargetObject, target.TargetObject.transform.up);
     }
 }
